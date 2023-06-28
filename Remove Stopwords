@@ -1,0 +1,11 @@
+# Create an included list of words needs to be removed
+stopwords = set(nltk.corpus.stopwords.words('english')) | set(ProperNouns) | set(list(string.ascii_lowercase))
+# Create skiplist if you want to omit some words
+new_stopwords = set([word for word in stopwords if word not in skiplist])
+
+def remove_stopwords(sent):
+  words = nltk.word_tokenize(sent)
+  Swords = [w for w in words if w not in new_stopwords]
+  return " ".join(Swords)
+  
+KeyData['ColStop'] = KeyData['Col'].apply(remove_stopwords)
