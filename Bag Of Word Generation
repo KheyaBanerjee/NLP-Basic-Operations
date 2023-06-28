@@ -1,0 +1,21 @@
+corpus = KeyData['CorpusFinal']
+vectorizer = CountVectorizer()
+corpus_vect = vectorizer.fit_transform(corpus)
+vectorizer.get_feature_names()
+
+def bow_extractor(corpus, ngram_range=(1,1)):
+    vectorizer = CountVectorizer(min_df=1, ngram_range=ngram_range)
+    features = vectorizer.fit_transform(corpus)
+    return vectorizer, features
+
+#build vectorizer and get features
+bow_vectorizer, bow_features = bow_extractor(corpus)
+features = bow_features.todense()
+feature_names = bow_vectorizer.get_feature_names()
+
+df_bow = pd.DataFrame(data=features, columns=feature_names)
+
+sort=list(df_bow.columns)
+sort.sort()
+df_bow = df_bow[sort]
+df_bow = df_bow.fillna(0)
