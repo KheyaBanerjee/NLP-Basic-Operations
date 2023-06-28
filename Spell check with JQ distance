@@ -1,0 +1,33 @@
+JQDistTh = 0.5
+  
+# Calculate distance and get the closest one
+inc, cor, NotCorrected = [], [], []
+for i, word in enumerate(set(CorpusIncorrectWords)):
+  temp = [(jaccard_distance(set(ngrams(word, 2)), set(ngrams(w, 2))),w) for w in MCorpus]
+  inc.append(str(word))
+  if sorted(temp, key = lambda val:val[0])[0][0] <= JQDistTh:
+    cor.append(str(sorted(temp, key = lambda val:val[0])[0][1]))
+  else:
+    #cor.append('')
+    cor.append(str(word))
+    NotCorrected.append(str(word))    
+
+CorrectSpellingPrediction = pd.DataFrame(columns=['Incorrect', 'CorrectGuess'])
+CorrectSpellingPrediction['Incorrect'] = inc
+CorrectSpellingPrediction['CorrectGuess'] = cor
+
+# Replace the incorrect word
+def ReplaceCorrectSpelling(sent):
+  words = nltk.word_tokenize(sent)
+  lst = []
+  for i, w in enumerate(words):
+    w = str(w)
+    if w in SpellCorrectDic:
+      lst.append(SpellCorrectDic[w][0])
+    else:
+      lst.append(w)
+  lst[:] = [x for x in lst if x != None]  
+  return " ".join(lst)
+
+SpellCorrectDic = CorrectSpellingPrediction.set_index('Incorrect').T.to_dict('list')
+KeyData['ColSpellCorr'] = KeyData['Col'].apply(ReplaceCorrectSpelling)
