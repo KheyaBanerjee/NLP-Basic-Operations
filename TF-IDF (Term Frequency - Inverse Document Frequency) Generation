@@ -1,0 +1,21 @@
+corpus = KeyData['CorpusFinal']
+vectorizer = CountVectorizer()
+corpus_vect = vectorizer.fit_transform(corpus)
+vectorizer.get_feature_names()
+
+def tfidf_extractor(corpus):
+    vectorizer = TfidfVectorizer(min_df = 1)
+    features = vectorizer.fit_transform(corpus)
+    return vectorizer, features
+
+#build vectorizer and get features
+tfidf_vectorizer, tfidf_features = tfidf_extractor(corpus)
+features = tfidf_features.todense()
+feature_names = tfidf_vectorizer.get_feature_names()
+
+df_tfidf = pd.DataFrame(data=features, columns=feature_names)
+
+sort = list(df_tfidf.columns)
+sort.sort()
+df_tfidf = df_tfidf[sort]
+df_tfidf = df_tfidf.fillna(0)
